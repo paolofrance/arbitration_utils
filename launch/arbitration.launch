@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <node pkg="arbitration_utils" type="arbitration_node" name="arbitration_node" output="screen"/>
+  <rosparam command="load" file="$(find arbitration_utils)/config/config.yaml" />
+  <rosparam command="load" file="$(find arbitration_utils)/config/scene_objects.yaml" />
+  
+</launch>

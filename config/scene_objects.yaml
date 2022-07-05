@@ -1,0 +1,2 @@
+object_geometries: 
+  box: { box : [ 0.1, 1.5, 0.5 ], color: [ 255, 255, 0, 1 ] }

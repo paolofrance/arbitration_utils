@@ -1,0 +1,16 @@
+planning_group: manipulator 
+base_link:      base_link
+tool_link:      tip
+
+joint_names:
+  - shoulder_pan_joint
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_2_joint
+  - wrist_3_joint
+
+alpha_topic: "alpha"
+
+max_fl: 0.831
+min_fl: 0.169
