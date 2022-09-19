@@ -10,6 +10,7 @@
 #include <rosdyn_core/primitives.h>
 
 #include <fl/Headers.h>
+#include <tf/transform_listener.h>
 
 class ArbitrationUtils
 {
@@ -25,6 +26,9 @@ public:
   std::string base_link_;
   
   rosdyn::ChainPtr chain_bt_;
+  rosdyn::ChainPtr chain_bee_;
+  
+  geometry_msgs::Pose obj_pose_;
   
   std::vector<double> lower_bounds_; 
   std::vector<double> upper_bounds_ ;
@@ -34,21 +38,26 @@ public:
   
   double max_fl_;
   double min_fl_;
-
   
   fl::Engine*         engine_;
   fl::InputVariable*  manipulability_ ;
   fl::InputVariable*  distance_ ;
+  fl::InputVariable*  reach_ ;
+  fl::InputVariable*  endpoint_ ;
   fl::OutputVariable* alpha_ ;
+  
+  tf::TransformListener listener_;
   
   ArbitrationUtils(ros::NodeHandle nh);
   double getManipulability(const std::vector<double> joints);
   double getCurrentManipulability();
-  void getPlanningScene   ( ros::NodeHandle& nh
-                        , planning_scene::PlanningScenePtr& ret );
+  double getReach();
+  double getDistanceFrom(const std::string& target);
+  void getPlanningScene( ros::NodeHandle& nh, planning_scene::PlanningScenePtr& ret );
   void addObj();
   double checkWorldCollisionDistance();
-  double computeAlpha(const double& dist, const double& man);
-  void   publishAlpha();
-
+  double computeAlpha(const double& dist, const double& reach, const double& man, const double& clos);
+  void publishAlpha(const double& alpha);
+  
+  void vecToPose(const std::vector<double>& pose ,geometry_msgs::Pose& gpose); 
 };

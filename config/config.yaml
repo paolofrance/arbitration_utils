@@ -1,6 +1,9 @@
 planning_group: manipulator 
 base_link:      base_link
 tool_link:      tip
+ee_link:        tool0
+
+alpha_fis: "alpha_3c.fis"
 
 joint_names:
   - shoulder_pan_joint
