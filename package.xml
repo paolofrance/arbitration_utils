@@ -15,7 +15,7 @@
   <depend>rosdyn_core</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>object_loader_msgs</depend>
-  <depend>std_msgs_stamped</depend>
+  <depend>std_msgs</depend>
   <depend>tf_conversions</depend>
   
   

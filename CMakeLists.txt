@@ -9,9 +9,9 @@ moveit_core
 rosdyn_core
 moveit_ros_planning_interface
 object_loader_msgs
-std_msgs_stamped
 tf_conversions
 rospy
+std_msgs
 )
 
 catkin_package(
@@ -20,7 +20,6 @@ catkin_package(
   CATKIN_DEPENDS
   moveit_core
   rosdyn_core
-  std_msgs_stamped
 )
 
 include_directories(

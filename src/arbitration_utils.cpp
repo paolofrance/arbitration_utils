@@ -7,7 +7,7 @@
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 
 #include <std_msgs/Float32.h>
-#include <std_msgs_stamped/Float32Stamped.h>
+#include <std_msgs/Float32.h>
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 
@@ -85,7 +85,7 @@ ArbitrationUtils::ArbitrationUtils(ros::NodeHandle nh)
     ROS_ERROR_STREAM (nh_.getNamespace() << " /alpha_topic not set. default "<< nh_.getNamespace()<<"/alpha");
     alpha_topic = nh_.getNamespace()+"/alpha";
   }
-  alpha_pub_ = nh_.advertise< std_msgs_stamped::Float32Stamped >(alpha_topic, 1000);
+  alpha_pub_ = nh_.advertise< std_msgs::Float32 >(alpha_topic, 1000);
   
   urdf::Model urdf_model;
   if (!urdf_model.initParam("robot_description"))
@@ -190,16 +190,16 @@ double ArbitrationUtils::getReach()
   return reach; 
 }
 
-double ArbitrationUtils::getDistanceFrom(const std::string& target)
+double ArbitrationUtils::getDistanceFrom(const std::string& base, const std::string& target)
 {
   tf::StampedTransform transform;
   tf::StampedTransform tt;
   double distance = 0.5;
   try
   {
-//     listener_.waitForTransform("tip", target, ros::Time::now(), ros::Duration(.01));
-    listener_.lookupTransform ("tip", target, ros::Time(0)    , transform);
-    listener_.lookupTransform ("tip", "TBT", ros::Time(0)    , tt);
+    listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(5.0));
+    listener_.lookupTransform (base, target, ros::Time(0)    , transform);
+    listener_.lookupTransform (base, "TBT", ros::Time(0)    , tt);
     Eigen::Vector3d v;
     
     tf::vectorTFToEigen(transform.getOrigin(),v);
@@ -209,7 +209,7 @@ double ArbitrationUtils::getDistanceFrom(const std::string& target)
     Eigen::Vector3d vt;
     tf::vectorTFToEigen(tt.getOrigin(),vt);
     double tttpdist = vt.norm();
-    ROS_INFO_STREAM_THROTTLE(0.1,GREEN<<"distance between tip tbt: " << tttpdist );
+    ROS_INFO_STREAM_THROTTLE(1,GREEN<<"distance between tip tbt: " << tttpdist );
     
     
     ros::Publisher pub = nh_.advertise<std_msgs::Float32>("/distance_to_goal", 10);
@@ -396,10 +396,9 @@ double ArbitrationUtils::computeAlpha(const double& dist, const double& reach, c
 
 void ArbitrationUtils::publishAlpha(const double& alpha)
 {  
-  std_msgs_stamped::Float32Stamped alpha_msg;
+  std_msgs::Float32 alpha_msg;
   
   alpha_msg.data = alpha;
-  alpha_msg.header.stamp = ros::Time::now();
   
   alpha_pub_.publish(alpha_msg);
   

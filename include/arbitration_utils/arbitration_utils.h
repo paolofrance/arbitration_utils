@@ -52,7 +52,7 @@ public:
   double getManipulability(const std::vector<double> joints);
   double getCurrentManipulability();
   double getReach();
-  double getDistanceFrom(const std::string& target);
+  double getDistanceFrom(const std::string& base, const std::string& target);
   void getPlanningScene( ros::NodeHandle& nh, planning_scene::PlanningScenePtr& ret );
   void addObj();
   double checkWorldCollisionDistance();

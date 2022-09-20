@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     double man = au.getCurrentManipulability();
     double reach = au.getReach();
     double dis = au.checkWorldCollisionDistance();
-    double clos = au.getDistanceFrom("target_pose");
+    double clos = au.getDistanceFrom("tip","target_pose");
     
     double alpha = au.computeAlpha(.25, reach, man, clos);
     ROS_INFO_STREAM_THROTTLE(2.0, CYAN << "manipulability: "<<man << BLUE << ", reach: "<<reach<< GREEN << ", distance: "<<dis << YELLOW << ", closeness: "<<clos << MAGENTA << " ---> alpha: "<<alpha);
