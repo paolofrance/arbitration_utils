@@ -35,27 +35,27 @@ int main(int argc, char **argv)
     double alpha = au.computeAlpha(.25, reach, man, clos);
     ROS_INFO_STREAM_THROTTLE(2.0, CYAN << "manipulability: "<<man << BLUE << ", reach: "<<reach<< GREEN << ", distance: "<<dis << YELLOW << ", closeness: "<<clos << MAGENTA << " ---> alpha: "<<alpha);
     
-//     au.publishAlpha(alpha);
+    au.publishAlpha(alpha);
     
     {
       std_msgs::Float32 m;
       m.data = dis;
-//       pubd.publish(m);
+      pubd.publish(m);
     }
     {
       std_msgs::Float32 m;
       m.data = reach;
-//       pubr.publish(m);
+      pubr.publish(m);
     }
     {
       std_msgs::Float32 m;
       m.data = man;
-//       pubm.publish(m);
+      pubm.publish(m);
     }
     {
       std_msgs::Float32 m;
       m.data = alpha;
-//       puba.publish(m);
+      puba.publish(m);
     }
     {
       std_msgs::Float32 m;
