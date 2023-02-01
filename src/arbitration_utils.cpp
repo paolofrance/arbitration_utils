@@ -204,12 +204,15 @@ double ArbitrationUtils::getDistanceFrom(const std::string& base, const std::str
     
     tf::vectorTFToEigen(transform.getOrigin(),v);
     distance = v.norm();
-    ROS_INFO_STREAM_THROTTLE(1.0,"distance between TF: " << distance);
+//     ROS_INFO_STREAM_THROTTLE(1.0,"distance between TF: " << distance);
     
     Eigen::Vector3d vt;
     tf::vectorTFToEigen(tt.getOrigin(),vt);
     double tttpdist = vt.norm();
-    ROS_INFO_STREAM_THROTTLE(1,GREEN<<"distance between tip tbt: " << tttpdist );
+    if (tttpdist < 0.001)
+      ROS_INFO_STREAM_THROTTLE(1,GREEN<<"distance between tip tbt ok <1mm: " << tttpdist );
+    else
+      ROS_INFO_STREAM_THROTTLE(1,RED<<"distance between tip tbt > 1mm: : " << tttpdist );
     
     
     ros::Publisher pub = nh_.advertise<std_msgs::Float32>("/distance_to_goal", 10);

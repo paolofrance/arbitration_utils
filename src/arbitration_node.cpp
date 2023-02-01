@@ -24,6 +24,7 @@ int main(int argc, char **argv)
   ros::Publisher pubm = nh.advertise<std_msgs::Float32>("/manip", 1000);
   ros::Publisher puba = nh.advertise<std_msgs::Float32>("/alp", 1000);
   ros::Publisher pubc = nh.advertise<std_msgs::Float32>("/closeness", 1000);
+  ros::Publisher pubvp = nh.advertise<std_msgs::Float32>("/vp_closeness", 1000);
   
   while (ros::ok())
   {
@@ -31,8 +32,10 @@ int main(int argc, char **argv)
     double reach = au.getReach();
     double dis = au.checkWorldCollisionDistance();
     double clos = au.getDistanceFrom("tip","target_pose");
+    double vp_clos = au.getDistanceFrom("tip","viapoint");
     
-    double alpha = au.computeAlpha(.25, reach, man, clos);
+// //     double alpha = au.computeAlpha(.25, reach, man, clos); // to REMOVE distance from collision objects
+    double alpha = au.computeAlpha(dis, reach, man, clos); // to INCLUDE distance from collision objects
     ROS_INFO_STREAM_THROTTLE(2.0, CYAN << "manipulability: "<<man << BLUE << ", reach: "<<reach<< GREEN << ", distance: "<<dis << YELLOW << ", closeness: "<<clos << MAGENTA << " ---> alpha: "<<alpha);
     
     au.publishAlpha(alpha);
@@ -61,6 +64,11 @@ int main(int argc, char **argv)
       std_msgs::Float32 m;
       m.data = clos;
       pubc.publish(m);
+    }
+    {
+      std_msgs::Float32 m;
+      m.data = vp_clos;
+      pubvp.publish(m);
     }
     
     
