@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find arbitration_utils)/config/drapebot_config.yaml" />
+  <node pkg="arbitration_utils" type="drapebot_arbitration" name="drapebot_arbitration_node" output="screen"/>  
+</launch>

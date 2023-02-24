@@ -17,3 +17,9 @@ alpha_topic: "alpha"
 
 max_fl: 0.831
 min_fl: 0.169
+
+add_object: false      # if true adds an obstacle defined in scene_objects.yaml
+ws_boundaries: false   # if false does not consider workspace boundaries
+
+
+

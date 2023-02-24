@@ -12,8 +12,21 @@ int main(int argc, char **argv)
   spinner.start();
   
   ArbitrationUtils au(nh);
-  
-  au.addObj();
+   
+  bool add_obj;
+  if ( !nh.getParam ( "add_object", add_obj) )
+  {
+    ROS_WARN_STREAM (nh.getNamespace() << " /no object found . default false");
+    add_obj = false;
+  }
+  bool ws_boundaries;
+  if ( !nh.getParam ( "ws_boundaries", ws_boundaries) )
+  {
+    ROS_WARN_STREAM (nh.getNamespace() << " /no object found . default false");
+    ws_boundaries = true;
+  }
+  if (add_obj)
+    au.addObj();
   
   ros::Duration(0.1).sleep();
   
@@ -34,7 +47,9 @@ int main(int argc, char **argv)
     double clos = au.getDistanceFrom("tip","target_pose");
     double vp_clos = au.getDistanceFrom("tip","viapoint");
     
-// //     double alpha = au.computeAlpha(.25, reach, man, clos); // to REMOVE distance from collision objects
+    if(!ws_boundaries)
+      reach=0.45;
+    
     double alpha = au.computeAlpha(dis, reach, man, clos); // to INCLUDE distance from collision objects
     ROS_INFO_STREAM_THROTTLE(2.0, CYAN << "manipulability: "<<man << BLUE << ", reach: "<<reach<< GREEN << ", distance: "<<dis << YELLOW << ", closeness: "<<clos << MAGENTA << " ---> alpha: "<<alpha);
     

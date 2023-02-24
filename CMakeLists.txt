@@ -35,3 +35,7 @@ arbitration_utils src/arbitration_utils.cpp
 add_executable(arbitration_node src/arbitration_node.cpp)
 target_link_libraries( arbitration_node arbitration_utils ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} fuzzylite)
 add_dependencies(arbitration_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(drapebot_arbitration src/drapebot_arbitration.cpp)
+target_link_libraries( drapebot_arbitration ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} )
+add_dependencies(drapebot_arbitration ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
