@@ -42,10 +42,10 @@ public:
   
   double getDistanceFrom(const std::string& base, const std::string& target)
   {
-    double distance = 0.5;
+    double distance = -1;
     try
     {
-      listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(5.0));
+      listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(1.0));
       listener_.lookupTransform (base, target, ros::Time(0)    , transform_);
       Eigen::Vector3d v;
       
@@ -95,12 +95,31 @@ int main(int argc, char **argv)
   if(!nh.getParam("offset",   offset   ))
     offset   = 0.01;
   
+  std::string target_pose, ee_pose;
+  if(!nh.getParam("target_pose", target_pose))
+  {
+    target_pose = "target_pose";
+    ROS_WARN_STREAM("param /target_pose not set . DEFAULT : " << target_pose );
+  }
+  if(!nh.getParam("ee_pose",   ee_pose))
+  {
+    target_pose = "ee_pose";
+    ROS_WARN_STREAM("param /ee_pose not set . DEFAULT : " << ee_pose );
+  }
+  
   
   Alpha al(height, slope, midpoint, offset);
   
   while (ros::ok())
   {
-    clos  = al.getDistanceFrom("tip","target_pose");
+    clos  = al.getDistanceFrom(ee_pose,target_pose);
+    
+    if(clos<0.0)
+    {
+      ROS_ERROR_STREAM("proximity to target pose negative . something wrong in the computation");
+      continue;
+    }
+    
     alpha = al.computeAlpha(clos);
     alp.data = alpha;
     pub.publish(alp);
