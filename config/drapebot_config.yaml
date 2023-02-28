@@ -1,5 +1,5 @@
 target_pose: "target_pose"
-ee_pose: "end_effector"
+ee_pose: "grasping"
 
 height   : 0.99;
 slope    : 20;
