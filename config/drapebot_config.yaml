@@ -1,8 +1,9 @@
-target_pose: "target_pose"
-ee_pose: "grasping"
+target_pose: "target_pose"     # pose from which measure the distance
+ee_pose: "grasping"            # TCP - arbitration measures the distance from ee_pose to target_pose
 
-height   : 0.99;
-slope    : 20;
-midpoint : 0.25;
-offset   : 0.01;
+# sigmoid parameters
+height   : 0.99
+slope    : 20     # changes the slope, the higher the less slope
+midpoint : 0.25   # central point of the sigmoid
+offset   : 0.01
   
