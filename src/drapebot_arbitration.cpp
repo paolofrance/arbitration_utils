@@ -45,7 +45,9 @@ public:
     double distance = -1.0;
     try
     {
-      listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(1.0));
+      if(!listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(1.0)))
+        return distance;
+      
       listener_.lookupTransform (base, target, ros::Time(0)    , transform_);
       Eigen::Vector3d v;
       
@@ -55,7 +57,7 @@ public:
     }
     catch (tf::TransformException &ex) 
     {
-      ROS_WARN_STREAM_THROTTLE(2.0,"transform not yet recovered, skipping");
+      ROS_WARN_STREAM_THROTTLE(10.0,"[arbitration_node] transform between "<< base << " and " << target << " does not yet exists . waiting for it");
       ROS_ERROR("%s",ex.what());
     }
     return -1.0;
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
     
     if(clos<0.0)
     {
-      ROS_WARN_STREAM_THROTTLE(5.0,"[arbitration_node] waiting for transform from " << target_pose << " and " << ee_pose );
+      ROS_WARN_STREAM_THROTTLE(10.0,"[arbitration_node] waiting for transform from " << target_pose << " and " << ee_pose );
       continue;
     }
     
