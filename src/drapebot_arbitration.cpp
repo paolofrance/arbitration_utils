@@ -42,7 +42,7 @@ public:
   
   double getDistanceFrom(const std::string& base, const std::string& target)
   {
-    double distance = -1;
+    double distance = -1.0;
     try
     {
       listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(1.0));
@@ -116,14 +116,14 @@ int main(int argc, char **argv)
     
     if(clos<0.0)
     {
-      ROS_ERROR_STREAM("proximity to target pose negative . something wrong in the computation");
+      ROS_WARN_STREAM_THROTTLE(5.0,"[arbitration_node] waiting for transform from " << target_pose << " and " << ee_pose );
       continue;
     }
     
     alpha = al.computeAlpha(clos);
     alp.data = alpha;
     pub.publish(alp);
-    ROS_INFO_STREAM_THROTTLE(1.0,"distance : "<< clos <<" --> alpha: "<<alpha);
+    ROS_INFO_STREAM_THROTTLE(1.0," [arbitration_node] distance : "<< clos <<" --> alpha: "<<alpha);
     
     rate.sleep();
   }
