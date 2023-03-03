@@ -33,14 +33,14 @@ public:
   
   Alpha(ros::NodeHandle nh) : nh_(nh)
   {
-    if(!nh_.getParam("height",   height   ))
-      height   = 0.99;
-    if(!nh_.getParam("slope",    slope    ))
-      slope    = 20;
-    if(!nh_.getParam("midpoint", midpoint ))
-      midpoint = 0.25;
-    if(!nh_.getParam("offset",   offset   ))
-      offset   = 0.01;
+    if(!nh_.getParam("height",   height_   ))
+      height_   = 0.99;
+    if(!nh_.getParam("slope",    slope_    ))
+      slope_    = 20;
+    if(!nh_.getParam("midpoint", midpoint_ ))
+      midpoint_ = 0.25;
+    if(!nh_.getParam("offset",   offset_   ))
+      offset_   = 0.01;
   };
   
   double computeAlpha(double x) 
@@ -82,7 +82,6 @@ private:
   tf::StampedTransform transform_;
   double height_, slope_, midpoint_, offset_;
   ros::NodeHandle nh_;
-  double height, slope, midpoint, offset;
   double distance_;
   Eigen::Vector3d dist_xyz_;
   ros::Publisher pub_distance = nh_.advertise<geometry_msgs::Pose>("/distance_from_target", 10);  
