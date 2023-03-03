@@ -2,6 +2,7 @@
 #include <std_msgs/Float32.h>
 #include <tf_conversions/tf_eigen.h>
 #include <tf/transform_listener.h>
+#include <geometry_msgs/Pose.h>
 
 
 
@@ -30,11 +31,18 @@ class Alpha
 {
 public:
   
-  Alpha(double h, double s, double m, double o)
-        : height_(h)
-        , slope_(s) 
-        , midpoint_(m) 
-        , offset_(o) {};
+  Alpha(ros::NodeHandle nh) : nh_(nh)
+  {
+    if(!nh_.getParam("height",   height   ))
+      height   = 0.99;
+    if(!nh_.getParam("slope",    slope    ))
+      slope    = 20;
+    if(!nh_.getParam("midpoint", midpoint ))
+      midpoint = 0.25;
+    if(!nh_.getParam("offset",   offset   ))
+      offset   = 0.01;
+  };
+  
   double computeAlpha(double x) 
   {
     return height_ / (1 + exp(-slope_ * (x - midpoint_))) + offset_;
@@ -42,18 +50,19 @@ public:
   
   double getDistanceFrom(const std::string& base, const std::string& target)
   {
-    double distance = -1.0;
+    distance_ = -1.0;
     try
     {
       if(!listener_.waitForTransform(base, target, ros::Time::now(), ros::Duration(1.0)))
-        return distance;
+        return distance_;
       
       listener_.lookupTransform (base, target, ros::Time(0)    , transform_);
-      Eigen::Vector3d v;
       
-      tf::vectorTFToEigen(transform_.getOrigin(),v);
-      distance = v.norm();
-      return distance;
+      tf::poseTFToMsg(transform_, distance_from_target_);
+      
+      tf::vectorTFToEigen(transform_.getOrigin(),dist_xyz_);
+      distance_ = dist_xyz_.norm();
+      return distance_;
     }
     catch (tf::TransformException &ex) 
     {
@@ -62,11 +71,22 @@ public:
     }
     return -1.0;
   }
+  
+  void publishDistance()
+  {
+    pub_distance.publish(distance_from_target_);
+  }
 
 private:
   tf::TransformListener listener_;
   tf::StampedTransform transform_;
   double height_, slope_, midpoint_, offset_;
+  ros::NodeHandle nh_;
+  double height, slope, midpoint, offset;
+  double distance_;
+  Eigen::Vector3d dist_xyz_;
+  ros::Publisher pub_distance = nh_.advertise<geometry_msgs::Pose>("/distance_from_target", 10);  
+  geometry_msgs::Pose distance_from_target_;
 };
 
 
@@ -80,22 +100,11 @@ int main(int argc, char **argv)
   
   ros::Rate rate(125);
   
-  ros::Publisher pub = nh.advertise<std_msgs::Float32>("/alpha", 10);  
+  ros::Publisher pub_alpha = nh.advertise<std_msgs::Float32>("/alpha", 10);  
 
   double clos  ;
   double alpha ;
   std_msgs::Float32 alp;
-  
-  double height, slope, midpoint, offset;
-  
-  if(!nh.getParam("height",   height   ))
-    height   = 0.99;
-  if(!nh.getParam("slope",    slope    ))
-    slope    = 20;
-  if(!nh.getParam("midpoint", midpoint ))
-    midpoint = 0.25;
-  if(!nh.getParam("offset",   offset   ))
-    offset   = 0.01;
   
   std::string target_pose, ee_pose;
   if(!nh.getParam("target_pose", target_pose))
@@ -110,7 +119,7 @@ int main(int argc, char **argv)
   }
   
   
-  Alpha al(height, slope, midpoint, offset);
+  Alpha al(nh);
   
   while (ros::ok())
   {
@@ -124,9 +133,11 @@ int main(int argc, char **argv)
     
     alpha = al.computeAlpha(clos);
     alp.data = alpha;
-    pub.publish(alp);
+    pub_alpha.publish(alp);
     ROS_INFO_STREAM_THROTTLE(1.0," [arbitration_node] distance : "<< clos <<" --> alpha: "<<alpha);
-    
+
+    al.publishDistance();
+
     rate.sleep();
   }
   ros::waitForShutdown();
