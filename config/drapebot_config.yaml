@@ -4,6 +4,6 @@ ee_pose: "grasping"            # TCP - arbitration measures the distance from ee
 # sigmoid parameters
 height   : 0.99
 slope    : 20     # changes the slope, the higher the less slope
-midpoint : 0.25   # central point of the sigmoid
+midpoint : 0.3   # central point of the sigmoid
 offset   : 0.01
   

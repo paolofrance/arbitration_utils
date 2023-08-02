@@ -2,4 +2,5 @@
 <launch>
   <rosparam command="load" file="$(find arbitration_utils)/config/drapebot_config.yaml" />
   <node pkg="arbitration_utils" type="drapebot_arbitration" name="drapebot_arbitration_node" output="screen"/>  
+  <node pkg="object_loader" type="context_manager_node" name="context_manager_node" output="screen"/>
 </launch>
